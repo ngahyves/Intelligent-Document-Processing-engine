@@ -1,1 +1,92 @@
+# -------------------------
+# PYTHON
+# -------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.pickle
+
+# -------------------------
+# ENVIRONMENTS
+# -------------------------
 .env
+*.env
+venv/
+env/
+.idp_env/
+idp_env/
+
+# -------------------------
+# IDE (VS Code, PyCharm, etc.)
+# -------------------------
+.vscode/
+.idea/
+*.code-workspace
+
+# -------------------------
+# NOTEBOOKS
+# -------------------------
+.ipynb_checkpoints/
+*.ipynb~
+
+# -------------------------
+# DATA
+# -------------------------
+data/
+datasets/
+*.csv
+*.tsv
+*.jsonl
+
+# -------------------------
+# MODELS
+# -------------------------
+models/*.pth
+models/*.onnx
+models/*.pt
+models/*.bin
+
+# -------------------------
+# MLflow
+# -------------------------
+mlruns/
+mlartifacts/
+
+# -------------------------
+# LOGS
+# -------------------------
+logs/
+*.log
+
+# -------------------------
+# CACHE
+# -------------------------
+.cache/
+*.cache
+*.tmp
+*.temp
+.pytest_cache/
+.coverage
+htmlcov/
+
+# -------------------------
+# DOCKER
+# -------------------------
+*.pid
+*.sock
+
+# -------------------------
+# OS FILES
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# SECRETS & CONFIG
+# -------------------------
+*.key
+*.pem
+secrets.yaml
+config.local.yaml
