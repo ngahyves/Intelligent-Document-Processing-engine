@@ -26,7 +26,7 @@ TEST_DIR = os.getenv("TEST_DIR", str(Path(DATA_DIR) / "test"))
 # ==============================================================================
 IMG_SIZE = int(os.getenv("IMG_SIZE", 224))
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", 32))
-NUM_WORKERS = int(os.getenv("NUM_WORKERS", 4))
+NUM_WORKERS = int(os.getenv("NUM_WORKERS", 2))
 SEED = int(os.getenv("SEED", 42))
 
 
