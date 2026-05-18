@@ -1,6 +1,7 @@
 # src/vision/train.py
 
 import torch
+import os
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import models
@@ -16,6 +17,14 @@ import mlflow.pytorch
 
 import random
 import numpy as np
+
+import dagshub
+import mlflow
+
+# Connexion To DagsHub 
+repo_owner = os.getenv("DAGSHUB_REPO_OWNER", "ngahyves")
+repo_name = os.getenv("DAGSHUB_REPO_NAME", "idp-engine")
+dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
 
 logger = get_logger(__name__)
 
