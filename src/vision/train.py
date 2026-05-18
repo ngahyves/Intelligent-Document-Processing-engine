@@ -1,11 +1,7 @@
 # src/vision/train.py
 
-import os
-import time
-import random
-import numpy as np
-
 import torch
+import os
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import models
@@ -18,11 +14,14 @@ from src.config.settings import PYTORCH_MODEL_PATH, SEED
 
 import mlflow
 import mlflow.pytorch
-import dagshub
 
-# ============================================================
-# DagsHub + MLflow init
-# ============================================================
+import random
+import numpy as np
+
+import dagshub
+import mlflow
+
+# Connexion To DagsHub 
 repo_owner = os.getenv("DAGSHUB_REPO_OWNER", "ngahyves")
 repo_name = os.getenv("DAGSHUB_REPO_NAME", "idp-engine")
 dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
@@ -56,43 +55,12 @@ def build_model(num_classes: int):
 
 
 # ============================================================
-# Safe MLflow logging helpers
-# ============================================================
-def safe_log_metric(key: str, value: float, step: int | None = None, sleep: float = 0.2):
-    """Log metrics in MLflow safely."""
-    try:
-        time.sleep(sleep)  
-        if step is not None:
-            mlflow.log_metric(key, value, step=step)
-        else:
-            mlflow.log_metric(key, value)
-    except Exception as e:
-        logger.warning(f"MLflow logging failed for metric '{key}': {e}")
-
-
-def safe_log_param(key: str, value):
-    try:
-        mlflow.log_param(key, value)
-    except Exception as e:
-        logger.warning(f"MLflow logging failed for param '{key}': {e}")
-
-
-def safe_log_model(model, artifact_path: str, sleep: float = 0.2):
-    try:
-        time.sleep(sleep)
-        mlflow.pytorch.log_model(model, artifact_path=artifact_path)
-    except Exception as e:
-        logger.warning(f"MLflow model logging failed at '{artifact_path}': {e}")
-
-
-# ============================================================
 # Training loop
 # ============================================================
 def train_model(model, train_loader, test_loader, device, classes, epochs=10):
     # Ensure a run is active
     if mlflow.active_run() is None:
         mlflow.start_run(run_name="vision_classifier_internal")
-
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=1e-4)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
@@ -107,13 +75,13 @@ def train_model(model, train_loader, test_loader, device, classes, epochs=10):
     best_acc = 0.0
     num_classes = len(classes)
 
-    # MLflow params (safe)
-    safe_log_param("epochs", epochs)
-    safe_log_param("optimizer", "AdamW")
-    safe_log_param("lr", 1e-4)
-    safe_log_param("scheduler", "CosineAnnealingLR")
-    safe_log_param("model", "EfficientNet-B0")
-    safe_log_param("num_classes", num_classes)
+    # MLflow params
+    mlflow.log_param("epochs", epochs)
+    mlflow.log_param("optimizer", "AdamW")
+    mlflow.log_param("lr", 1e-4)
+    mlflow.log_param("scheduler", "CosineAnnealingLR")
+    mlflow.log_param("model", "EfficientNet-B0")
+    mlflow.log_param("num_classes", num_classes)
 
     for epoch in range(epochs):
         logger.info(f"\n===== Epoch {epoch+1}/{epochs} =====")
@@ -150,9 +118,8 @@ def train_model(model, train_loader, test_loader, device, classes, epochs=10):
 
         logger.info(f"Train -> Loss: {train_loss:.4f} | Acc: {train_acc:.4f}")
 
-        # MLflow logging (robuste)
-        safe_log_metric("train_loss", train_loss, step=epoch)
-        safe_log_metric("train_accuracy", train_acc, step=epoch)
+        mlflow.log_metric("train_loss", train_loss, step=epoch)
+        mlflow.log_metric("train_accuracy", train_acc, step=epoch)
 
         # -------------------------------------------------------
         # EVALUATION PHASE
@@ -188,12 +155,11 @@ def train_model(model, train_loader, test_loader, device, classes, epochs=10):
             f"Prec: {precision:.4f} | Rec: {recall:.4f} | F1: {f1:.4f}"
         )
 
-        # MLflow logging (robuste)
-        safe_log_metric("test_loss", test_loss, step=epoch)
-        safe_log_metric("test_accuracy", acc, step=epoch)
-        safe_log_metric("precision_macro", precision, step=epoch)
-        safe_log_metric("recall_macro", recall, step=epoch)
-        safe_log_metric("f1_macro", f1, step=epoch)
+        mlflow.log_metric("test_loss", test_loss, step=epoch)
+        mlflow.log_metric("test_accuracy", acc, step=epoch)
+        mlflow.log_metric("precision_macro", precision, step=epoch)
+        mlflow.log_metric("recall_macro", recall, step=epoch)
+        mlflow.log_metric("f1_macro", f1, step=epoch)
 
         scheduler.step()
 
@@ -204,10 +170,10 @@ def train_model(model, train_loader, test_loader, device, classes, epochs=10):
             best_acc = acc
             torch.save(model.state_dict(), PYTORCH_MODEL_PATH)
             logger.info(f"New best model saved at {PYTORCH_MODEL_PATH}")
-            safe_log_model(model, artifact_path="best_model")
+            mlflow.pytorch.log_model(model, artifact_path="best_model")
 
     logger.info(f"\nTraining complete. Best accuracy: {best_acc:.4f}")
-    safe_log_metric("best_accuracy", best_acc)
+    mlflow.log_metric("best_accuracy", best_acc)
 
     return {
         "train_loss": train_loss_history,
@@ -241,5 +207,6 @@ if __name__ == "__main__":
 
         history = train_model(model, train_loader, test_loader, device, classes, epochs=10)
 
+        # Summary
         final_test_acc = history["test_acc"][-1]
         logger.info(f"Final test accuracy: {final_test_acc:.4f}")
