@@ -1,7 +1,9 @@
-from src.rag.chunker import DocumentChunker
-from src.rag.embedder import TextEmbedder
+#rag/test_rag_logic
 
-# 1. Simuler un texte OCR (prends celui que ton OCR a généré !)
+from rag.chunker import DocumentChunker
+from rag.embedder import TextEmbedder
+
+# 1. text example
 text_example = "From Original Massa9asvy Carclyn Sont Yeanesday February 232000 1249 PM" \
 " Ryzn Thcmas Desel Paula Chanitan Gavalti Daragar Karen Chalkin, Karcn Prcil ," \
 " Michacl WcComick, Brendan Canovale Nary _ Subject RE YAP Mossagos" \
@@ -18,4 +20,5 @@ print(f"Chunks : {chunks}")
 embedder = TextEmbedder()
 vectors = embedder.embed_chunks(chunks)
 print(f"Form of first vector : {vectors[0].shape}") 
-# Doit afficher (384,)
+
+#We are expecting 384 from SBERT

@@ -1,4 +1,5 @@
 # rag/chunker.py
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from src.config.logging_config import get_logger
 

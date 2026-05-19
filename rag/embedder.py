@@ -12,7 +12,7 @@ class TextEmbedder:
 
     def embed_chunks(self, chunks: list):
         """
-        Transforme text's list in vector.
+        Transform text's list in vector.
         """
         logger.info(f"Generate embeddings for {len(chunks)} chunks.")
         embeddings = self.model.encode(chunks, show_progress_bar=False)
