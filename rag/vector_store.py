@@ -1,4 +1,5 @@
 #rag/vector_store
+#!pip install faiss-cpu --quiet
 
 import faiss
 import numpy as np
