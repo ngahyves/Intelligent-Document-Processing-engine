@@ -1,84 +1,73 @@
 #rag/vector_store
 
-import chromadb
-from src.config import settings
+import faiss
+import numpy as np
 from src.config.logging_config import get_logger
 
-logger=get_logger('vectostore')
+logger=get_logger('vector Storing')
 
 class VectorStoreManager:
-    def __init__(self, collection_name="document_collection"):
+    """
+    Manages the FAISS index for high-performance semantic search.
+    FAISS is used here to avoid dependency conflicts and ensure scalability.
+    """
+    def __init__(self, dimension: int = 384):
         """
-        Initialize ChromaDB in persistant mode  (saving on disk).
+        Initialize the FAISS index.
+        :param dimension: The size of the embedding vectors (384 for all-MiniLM-L6-v2).
         """
-        self.db_path = str(settings.VECTOR_DB_PATH)
-        logger.info(f"Initialization of ChromaDB : {settings.VECTOR_DB_PATH}")
+        # IndexFlatL2 uses Euclidean distance for similarity search
+        self.index = faiss.IndexFlatL2(dimension)
         
-        # 1. client creation in persistent mode
-        self.client = chromadb.PersistentClient(path=str(settings.VECTOR_DB_PATH))
+        # Dictionary to map numerical indices to actual text content
+        self.doc_map = {} 
+        self.current_id = 0
         
-        # 2. Gathering collection
-        self.collection = self.client.get_or_create_collection(name=collection_name)
+        logger.info(f"FAISS Vector Store initialized with dimension: {dimension}")
 
-    def add_documents(self, chunks: list, embeddings: list, metadatas: list, ids: list):
+    def add_documents(self, chunks: list, embeddings: np.ndarray):
         """
-        Adding chunks and vector in database.
+        Adds text chunks and their corresponding embeddings to the index.
+        :param chunks: List of strings (text segments).
+        :param embeddings: Numpy array of vectors (float32).
         """
         try:
-            logger.info(f"Adding {len(chunks)} documents in ChromaDB.")
-            self.collection.add(
-                documents=chunks,
-                embeddings=embeddings.tolist(), # Chroma is expecting lists
-                metadatas=metadatas,
-                ids=ids
-            )
-            logger.info("Documents added succesfully.")
+            # FAISS requires float32 precision for efficient C++ processing
+            vectors = np.array(embeddings).astype('float32')
+            
+            # Add vectors to the underlying C++ index
+            self.index.add(vectors)
+            
+            # Map the new vectors to their text content
+            for chunk in chunks:
+                self.doc_map[self.current_id] = chunk
+                self.current_id += 1
+                
+            logger.info(f"Successfully added {len(chunks)} chunks to FAISS index.")
         except Exception as e:
-            logger.error(f"Error when adding to ChromaDB : {e}")
+            logger.error(f"Failed to add documents to FAISS: {str(e)}")
+            raise
 
-    def query_similar_docs(self, query_embedding: list, n_results=3):
+    def search(self, query_embedding: np.ndarray, n_results: int = 3):
         """
-        Check the most closed N chunks to a vector .
+        Performs a semantic search to find the most relevant document chunks.
+        :param query_embedding: Vector representation of the user's question.
+        :param n_results: Number of top results to return.
+        :return: A dictionary containing the retrieved documents.
         """
-        logger.info(f"Research of {n_results} similar documents .")
-        results = self.collection.query(
-            query_embeddings=[query_embedding.tolist()],
-            n_results=n_results
-        )
-        return results
-    
-
-import chromadb
-from src.config import settings, logger
-
-class VectorStoreManager:
-    def __init__(self, collection_name="idp_documents"):
-        # On utilise directement le chemin de ton fichier settings
-        self.db_path = str(settings.VECTOR_DB_PATH)
+        logger.info(f"Performing semantic search for top-{n_results} results.")
         
-        logger.info(f"Initialisation de ChromaDB au chemin : {self.db_path}")
-
-        # Pas besoin de l'objet Settings ici, le PersistentClient gère tout
-        self.client = chromadb.PersistentClient(path=self.db_path)
-
-        # Création ou récupération de la collection
-        self.collection = self.client.get_or_create_collection(name=collection_name)
-
-    def add_documents(self, chunks, embeddings, metadatas, ids):
-        try:
-            self.collection.add(
-                documents=chunks,
-                embeddings=embeddings,
-                metadatas=metadatas,
-                ids=ids
-            )
-            logger.info(f"✅ {len(chunks)} morceaux ajoutés à ChromaDB.")
-        except Exception as e:
-            logger.error(f"❌ Erreur lors de l'ajout : {e}")
-
-    def search(self, query_embedding, n_results=3):
-        logger.info(f"Recherche sémantique : top-{n_results} résultats.")
-        return self.collection.query(
-            query_embeddings=[query_embedding],
-            n_results=n_results
-        )
+        # Prepare the query vector for FAISS
+        query_vector = np.array([query_embedding]).astype('float32')
+        
+        # Search the index for distances (D) and indices (I)
+        distances, indices = self.index.search(query_vector, n_results)
+        
+        # Retrieve the text content using the doc_map
+        retrieved_docs = []
+        for idx in indices[0]:
+            if idx != -1:  # -1 means no match was found
+                retrieved_docs.append(self.doc_map[idx])
+        
+        # Return format consistent with standard vector DB outputs
+        return {'documents': [retrieved_docs], 'distances': distances[0]}
