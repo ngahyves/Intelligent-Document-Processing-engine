@@ -1,5 +1,6 @@
 #src/llm/rag_chain.py
 #langchain RAG pipeline
+# pip install langchain-groq langchain-core langchain
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
