@@ -1,11 +1,11 @@
 # rag/insert_chunks.py
 
 import uuid
-from rag.chroma_client import get_or_create_collection
+from rag.chroma_client import get_chroma_client
 from rag.embeddings_utils import EmbeddingModel
 
 def insert_chunk(content: str, metadata: dict = None):
-    collection = get_or_create_collection("document_chunks")
+    collection = get_chroma_client("document_chunks")
     embedder = EmbeddingModel()
 
     embedding = embedder.embed(content)

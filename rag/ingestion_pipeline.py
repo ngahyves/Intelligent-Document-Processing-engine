@@ -2,8 +2,8 @@
 import hashlib
 from pathlib import Path
 from typing import List, Dict, Any
-from paddleocr import PaddleOCR
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+import easyocr
+from langchain.text_splitters import RecursiveCharacterTextSplitter
 
 from src.vision.classifier import predict_document_type
 from src.rag.chroma_client import get_chroma_client
@@ -14,7 +14,7 @@ logger = get_logger(__name__)
 
 class IngestionPipeline:
     def __init__(self):
-        self.ocr = PaddleOCR(lang='en', use_angle_cls=True)
+        self.ocr = easyocr.Reader(['en'], gpu=False)
         self.splitter = RecursiveCharacterTextSplitter(
             chunk_size=500,
             chunk_overlap=50,
@@ -46,19 +46,19 @@ class IngestionPipeline:
             doc_type = "unknown"
 
         # 2. OCR
-        result = self.ocr.ocr(str(file_path), cls=True)
+        result = self.ocr.readtext(str(file_path))
         if not result or not result[0]:
             logger.error(f"OCR failed or empty for {file_path}")
             return {"status": "failed", "reason": "OCR empty", "file": str(file_path)}
 
-        full_text = "\n".join([line[1][0] for line in result[0]])
+        text = "\n".join([item[1] for item in result])
 
-        if not full_text.strip():
+        if not text.strip():
             logger.warning(f"OCR returned empty text for {file_path}")
             return {"status": "failed", "reason": "OCR empty text", "file": str(file_path)}
 
         # 3. Chunking
-        chunks = self.splitter.split_text(full_text)
+        chunks = self.splitter.split_text(text)
         logger.info(f"Created {len(chunks)} chunks for {file_path}")
 
         # 4. Embeddings (batch)
