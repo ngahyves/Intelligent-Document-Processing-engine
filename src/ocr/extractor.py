@@ -2,7 +2,7 @@
 #pip install easyocr
 import easyocr
 import numpy as np
-from src.config.load_config import get_logger
+from src.config.logging_config import get_logger
 
 #Calling the logger
 logger= get_logger("extraction")
