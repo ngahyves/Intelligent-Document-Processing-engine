@@ -1,7 +1,9 @@
 import numpy as np
 from rag.embedder import TextEmbedder
 from rag.vector_store import VectorStoreManager
-from src.config import logger
+from src.config.logging_config import get_logger
+
+logger=get_logger('Vector_store')
 
 def test_complete_vector_pipeline():
     logger.info("--- Starting VECTOR STORE test ---")
