@@ -1,3 +1,4 @@
+#src/llm/test_full_rag
 import os
 import sys
 sys.path.append(os.getcwd())
@@ -7,7 +8,7 @@ from rag.vector_store import VectorStoreManager
 from src.llm.rag_chain import RAGEngine
 from src.config.logging_config import get_logger
 
-logger=get_logger("test full rag")
+logger=get_logger(__name__)
 
 def test_end_to_end_rag():
     logger.info("---STARTING FULL RAG TEST ---")

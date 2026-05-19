@@ -1,3 +1,5 @@
+#src/llm.grok_client
+
 from langchain_groq import ChatGroq
 from src.config.settings import settings  
 from src.config.logging_config import get_logger
@@ -5,7 +7,7 @@ from src.config.logging_config import get_logger
 logger=get_logger(__name__)
 
 class GroqClient:
-    def __init__(self, model_name: str = "llama3-8b-8192", temperature: float = 0):
+    def __init__(self, model_name: str = "llama-3.1-8b-instant", temperature: float = 0):
         try:
             logger.info(f"Connecting to Groq using model: {model_name}")
             
