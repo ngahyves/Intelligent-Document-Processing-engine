@@ -1,3 +1,25 @@
-langchain==0.2.x  # Or current version
+# Web & API
+fastapi
+uvicorn
+python-multipart
+pydantic
+pydantic-settings
+python-dotenv
+
+# Vision & OCR
+onnxruntime
+easyocr
+pillow
+numpy
+
+# RAG & LLM
+faiss-cpu
+sentence-transformers
+langchain
 langchain-groq
+langchain-community
 langchain-core
+
+# Monitoring & Config
+prometheus-fastapi-instrumentator
+pyyaml

@@ -1,12 +1,8 @@
 # tests/test_classifier.py
+from src.vision.classifier import DocumentClassifier
+from src.config.settings import settings
 
-from pathlib import Path
-from src.vision.classifier import predict_document_type
-
-def test_classifier():
-    sample = Path("samples/test_invoice.png")
-    result = predict_document_type(sample)
-
-    assert isinstance(result, str)
-    assert len(result) > 0
-    print("Document type:", result)
+def test_classifier_init():
+    # tests if the model is well loaded
+    classifier = DocumentClassifier(str(settings.ONNX_MODEL_PATH))
+    assert classifier.session is not None

@@ -90,3 +90,8 @@ Thumbs.db
 *.pem
 secrets.yaml
 config.local.yaml
+# -------------------------
+# Rag volumes (in docker compose)
+# -------------------------
+rag/index/*
+rag/index/

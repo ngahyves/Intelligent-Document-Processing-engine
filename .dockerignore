@@ -34,19 +34,15 @@ idp_env/
 # -------------------------
 # DATA
 # -------------------------
-data/
-datasets/
-*.csv
-*.tsv
-*.jsonl
+data/*
+!data/samples/
 
 # -------------------------
 # MODELS
 # -------------------------
-models/*.pth
-models/*.onnx
-models/*.pt
-models/*.bin
+models/*
+# unique authorization for the onnx model (onnx and onnx.data)
+!models/classifier.onnx*
 
 # -------------------------
 # MLflow
