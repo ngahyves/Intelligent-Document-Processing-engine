@@ -66,6 +66,19 @@ graph TD
     style N fill:#dfd,stroke:#333,stroke-width:2px
 ```
 
+## 📂 Dataset: RVL-CDIP
+
+This project uses a stratified subset of the **RVL-CDIP** (Ryerson Vision Lab Complex Document Information Processing) dataset. 
+
+*   **Source**: [Kaggle - RVL-CDIP Subset](https://www.kaggle.com/datasets/pdavpoojan/the-rvlcdip-dataset-test)
+*   **Nature**: Grayscale images of scanned documents from the 1980s-1990s.
+*   **Scope**: For this IDP Engine, I focused on 5 key business categories:
+    *   **Invoices**: Critical for accounts payable automation.
+    *   **Forms**: Standard for data entry digitizing.
+    *   **Letters & Emails**: For corporate communication routing.
+    *   **Reports**: For high-level knowledge extraction.
+*   **Pre-processing**: All images were resized to 224x224 and normalized using ImageNet statistics to match the EfficientNetB0 input requirements.
+
 ## 🏗️ **System Architecture**
 
 The pipeline follows a modular microservice architecture designed for scalability and high availability:
