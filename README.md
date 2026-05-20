@@ -18,24 +18,17 @@ IntelliDoc-Stream is a production-ready AI pipeline that automates the classific
 *   **Observability:** Full execution transparency with LangSmith tracing and MLflow/DagsHub for model lineage.
 *   **MLOps Maturity:** Automated CI/CD with GitHub Actions and orchestration via Prefect for robust batch ingestion. Deployed on Google Cloud Platform
 *   **Tech Stack:** 
-## 🧠 AI & Machine Learning
-`PyTorch` · `ONNX Runtime` · `Sentence-Transformers` · `Llama 3.1 (Groq)` · `RAG` · `FAISS` · `LangChain`
+***AI & Machine Learning***:`PyTorch` · `ONNX Runtime` · `Sentence-Transformers` · `Llama 3.1 (Groq)` · `RAG` · `FAISS` · `LangChain`
 
-## ⚙️ Backend & APIs
-`FastAPI` · `Pydantic` · `Uvicorn`
+***⚙️ Backend & APIs***:`FastAPI` · `Pydantic` · `Uvicorn`
 
-## 🚀 MLOps & Orchestration
-`Docker` · `Prefect` · `MLflow` · `YAML configuration`
+***🚀 MLOps & Orchestration***:`Docker` · `Prefect` · `MLflow` · `YAML configuration`
 
-## 📊 Monitoring & Observability
-`Prometheus` · `Grafana` · `LangSmith`
+***📊 Monitoring & Observability***:`Prometheus` · `Grafana` · `LangSmith`
 
-## ☁️ Cloud & Deployment
-`Google Cloud Run` · `Groq Cloud` · `Linux/Bash`
+***☁️ Cloud & Deployment***:`Google Cloud Run` · `Groq Cloud` · `Linux/Bash`
 
-## 🧪 Testing & CI/CD
-`Pytest` · `GitHub Actions`
-
+***🧪 Testing & CI/CD***:`Pytest` · `GitHub Actions`
 
 ```mermaid
 graph TD
