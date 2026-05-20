@@ -1,4 +1,5 @@
 # 🚀 **IntelliDoc-Stream: Industrial-Grade Intelligent Document Processing (IDP)**
+![Python CI](https://github.com/ngahyves/Intelligent-Document-Processing-engine/actions/workflows/python-tests.yml/badge.svg)
 ![alt text](https://img.shields.io/badge/python-3.11-blue.svg)
 
 ![alt text](https://img.shields.io/badge/MLflow-DagsHub-blue?style=flat&logo=mlflow)
@@ -18,6 +19,7 @@ IntelliDoc-Stream is a production-ready AI pipeline that automates the classific
 *   **Observability:** Full execution transparency with LangSmith tracing and MLflow/DagsHub for model lineage.
 *   **MLOps Maturity:** Automated CI/CD with GitHub Actions and orchestration via Prefect for robust batch ingestion. Deployed on Google Cloud Platform
 *   **Tech Stack:** 
+
 ***AI & Machine Learning***:`PyTorch` · `ONNX Runtime` · `Sentence-Transformers` · `Llama 3.1 (Groq)` · `RAG` · `FAISS` · `LangChain`
 
 ***⚙️ Backend & APIs***:`FastAPI` · `Pydantic` · `Uvicorn`
