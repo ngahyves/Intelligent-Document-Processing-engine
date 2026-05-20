@@ -1,5 +1,5 @@
 # 🚀 **IntelliDoc-Stream: Industrial-Grade Intelligent Document Processing (IDP)**
-![Python CI](https://github.com/ngahyves/Intelligent-Document-Processing-engine/actions/workflows/python-tests.yml/badge.svg)
+[![IDP Engine CI](https://github.com/ngahyves/Intelligent-Document-Processing-engine/actions/workflows/ci.py.yml/badge.svg)](https://github.com/ngahyves/Intelligent-Document-Processing-engine/actions/workflows/ci.py.yml)
 ![alt text](https://img.shields.io/badge/python-3.11-blue.svg)
 
 ![alt text](https://img.shields.io/badge/MLflow-DagsHub-blue?style=flat&logo=mlflow)
