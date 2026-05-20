@@ -19,12 +19,24 @@ jobs:
       with:
         python-version: '3.11'
 
+    # Install libs for OpenCV
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgl1-mesa-glx libglib2.0-0
+
+    # Installing my dependencies
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest pytest-mock fastapi httpx
+        pip install -r requirements.txt
+        pip install pytest pytest-mock httpx
 
     - name: Run Pytest
+      env:
+        # False variables without real api keys
+        GROQ_API_KEY: "gsk_dummy_for_testing"
+        LANGCHAIN_API_KEY: "lsv2_dummy_for_testing"
+        PYTHONPATH: .
       run: |
-        export PYTHONPATH=$PYTHONPATH:.
         pytest tests/
