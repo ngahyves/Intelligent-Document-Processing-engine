@@ -19,7 +19,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # 5. Copy of source code and models
 COPY . .
 
-# 6. Environment variable to help Python locate the ‘src’ folder
+# 6. Environment variable to help Python locate the modules
 ENV PYTHONPATH=/app
 
 # 7. Port 
