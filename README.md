@@ -17,7 +17,25 @@ IntelliDoc-Stream is a production-ready AI pipeline that automates the classific
 *   **Reliability:** 100% Zero-Hallucination rate in test benchmarks through strict RAG Guardrails and prompt grounding.
 *   **Observability:** Full execution transparency with LangSmith tracing and MLflow/DagsHub for model lineage.
 *   **MLOps Maturity:** Automated CI/CD with GitHub Actions and orchestration via Prefect for robust batch ingestion. Deployed on Google Cloud Platform
-*   **Tech Stack:** `Python` · `PyTorch` · `ONNX` · `FastAPI` · `Groq` · `LangChain` · `FAISS` · `Docker` · `MLflow` · `Prefect` · `LangSmith` · `Prometheus` · `Grafana`. `Google Cloud Run`
+*   **Tech Stack:** 
+## 🧠 AI & Machine Learning
+`PyTorch` · `ONNX Runtime` · `Sentence-Transformers` · `Llama 3.1 (Groq)` · `RAG` · `FAISS` · `LangChain`
+
+## ⚙️ Backend & APIs
+`FastAPI` · `Pydantic` · `Uvicorn`
+
+## 🚀 MLOps & Orchestration
+`Docker` · `Prefect` · `MLflow` · `YAML configuration`
+
+## 📊 Monitoring & Observability
+`Prometheus` · `Grafana` · `LangSmith`
+
+## ☁️ Cloud & Deployment
+`Google Cloud Run` · `Groq Cloud` · `Linux/Bash`
+
+## 🧪 Testing & CI/CD
+`Pytest` · `GitHub Actions`
+
 
 ```mermaid
 graph TD
@@ -85,26 +103,12 @@ Experiment tracking is centralized on DagsHub. Every model version is linked to 
 Real-time tracking of Golden Signals: Request Latency (P99)=0.99s, CPU/RAM utilization and number of requests
 ![Mlflow](./snapshots/grafana_dashboard.png)
 
-## 🛠️ **Technical Stack**
-
-Category	        |Technologies
-----------------------------------------------------------------------------------------
-MLOps & Production	| Docker, FastAPI, GitHub Actions, MLflow, Prefect, Prometheus, Grafana
------------------------------------------------------------------------------------------
-Generative AI	    | LangChain, LangSmith, RAG, Llama 3.1 (Groq), Sentence-Transformers
------------------------------------------------------------------------------------------
-Machine Learning	| PyTorch, ONNX Runtime, EfficientNetB0, Scikit-learn
-----------------------------------------------------------------------------------------
-Data Engineering	| FAISS, Pydantic, Pandera, NumPy, Pandas
-----------------------------------------------------------------------------------------
-Infrastructure	    | GCP Cloud Run, Linux/Bash, YAML configuration
------------------------------------------------------------------------------------------
 
 ## 📋 **Project Lifecycle & Engineering Challenges**
 
 * 1. Optimization for Production (ONNX)
 To deploy on resource-constrained environments (8GB RAM), the PyTorch model was converted to ONNX.
-***Result***: 3x reduction in inference latency and 60% lower memory footprint.
+***Result***: 4.8x reduction in inference latency 
 ***Challenge***: Resolved "External Data Path" errors by correctly mapping .onnx.data artifacts in the Docker build.
 * 2. High-Performance RAG Ingestion
 Implemented an automated ingestion flow using **Prefect** to handle batch document processing with built-in Retries and error handling.
@@ -133,8 +137,11 @@ docker-compose -f docker/docker-compose.yml up --build
 * API Usage
 
 Ingest: POST /upload (Upload a scan)
+
 Query: POST /ask (Ask a question about the document)
+
 Health: GET /health (Status & Model info)
+
 Swagger UI: Access at http://localhost:8000/docs
 
 💡 **Key Lessons Learned**
@@ -143,7 +150,7 @@ Swagger UI: Access at http://localhost:8000/docs
 * Inference Bottlenecks: Identified OCR on CPU as the primary latency driver and implemented profiling to justify future GPU scaling strategies.
 
 
-**Yves-Ricky - Machine Learning Engineer**
+**Yves-Bernard-Simplice NGAH - Machine Learning Engineer**
 **Master’s in Biostatistics | Specialized in Robust & Explainable AI Systems**
 
 
