@@ -11,12 +11,12 @@ IntelliDoc-Stream is a production-ready AI pipeline that automates the classific
 
 ## 📊 Key Results & Engineering Impact
 
-*   **Core Architecture:** Multi-modal pipeline combining EfficientNetB0 (Vision) performing 80% of accuracy on test and Llama 3.1 (GenAI).
-*   **Inference Optimization:** Achieved a 4.8x speedup in classification latency (180ms → 37ms) by migrating from PyTorch to ONNX Runtime, enabling high-throughput document routing on standard CPU infrastructure.
-*   **RAG Performance:** Sub-second LLM response time (~370ms) powered by Groq LPU and FAISS semantic indexing.
+*   **Core Architecture:** Multi-modal pipeline combining EfficientNetB0 (Vision) performing **80%** of classification's accuracy on test and Llama 3.1 (GenAI).
+*   **Inference Optimization:** Achieved a **4.8x speedup** in classification latency (180ms → 37ms) by migrating from PyTorch to ONNX Runtime, enabling high-throughput document routing on standard CPU infrastructure.
+*   **RAG Performance:** Sub-second **LLM response time (~370ms)** powered by Groq LPU and FAISS semantic indexing.
 *   **Reliability:** 100% Zero-Hallucination rate in test benchmarks through strict RAG Guardrails and prompt grounding.
 *   **Observability:** Full execution transparency with LangSmith tracing and MLflow/DagsHub for model lineage.
-*   **MLOps Maturity:** Automated CI/CD with GitHub Actions and orchestration via Prefect for robust batch ingestion.
+*   **MLOps Maturity:** Automated CI/CD with GitHub Actions and orchestration via Prefect for robust batch ingestion. Deployed on Google Cloud Platform
 *   **Tech Stack:** `Python` · `PyTorch` · `ONNX` · `FastAPI` · `Groq` · `LangChain` · `FAISS` · `Docker` · `MLflow` · `Prefect` · `LangSmith` · `Prometheus` · `Grafana`. `Google Cloud Run`
 
 ```mermaid
