@@ -10,12 +10,12 @@ with mock.patch("onnxruntime.InferenceSession"):
 client = TestClient(app)
 
 def test_health():
-    """Vérify if API is healthy(running)"""
+    """Verify if API is healthy(running)"""
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "healthy"
 
 def test_ask_no_question():
-    """Vérify if the API rejects empty requests"""
+    """Verify if the API rejects empty requests"""
     response = client.post("/ask", json={})
     assert response.status_code == 422

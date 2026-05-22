@@ -5,19 +5,22 @@ import io
 
 class DocumentClassifier:
     def __init__(self, model_path):
-        # Load the model once
         self.session = ort.InferenceSession(model_path)
         self.classes = ["letter", "form", "email", "invoice", "report"]
 
     def predict(self, image_bytes):
-        # 1. Simple Preprocessing: Resize and Normalize
+        # Preprocessing
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB').resize((224, 224))
         img_array = np.array(img).transpose(2, 0, 1).astype(np.float32) / 255.0
-        img_array = np.expand_dims(img_array, axis=0) # Add batch dimension
+        img_array = np.expand_dims(img_array, axis=0)
 
-        # 2. Run Inference
+        # Inference
         outputs = self.session.run(None, {self.session.get_inputs()[0].name: img_array})
         
-        # 3. Get the class with highest score
-        idx = np.argmax(outputs[0])
-        return self.classes[idx]
+        # confidence score (Softmax)
+        exp_out = np.exp(outputs[0][0])
+        probs = exp_out / np.sum(exp_out)
+        
+        idx = np.argmax(probs)
+        # return values
+        return self.classes[idx], float(probs[idx])

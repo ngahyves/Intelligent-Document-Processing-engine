@@ -12,12 +12,48 @@ IntelliDoc-Stream is a production-ready AI pipeline that automates the classific
 
 ## 📊 Key Results & Engineering Impact
 
-*   **Core Architecture:** Multi-modal pipeline combining EfficientNetB0 (Vision) performing **80%** of classification's accuracy on test and Llama 3.1 (GenAI).
-*   **Inference Optimization:** Achieved a **4.8x speedup** in classification latency (180ms → 37ms) by migrating from PyTorch to ONNX Runtime, enabling high-throughput document routing on standard CPU infrastructure.
-*   **RAG Performance:** Sub-second **LLM response time (~370ms)** powered by Groq LPU and FAISS semantic indexing.
-*   **Reliability:** 100% Zero-Hallucination rate in test benchmarks through strict RAG Guardrails and prompt grounding.
-*   **Observability:** Full execution transparency with LangSmith tracing and MLflow/DagsHub for model lineage.
-*   **MLOps Maturity:** Automated CI/CD with GitHub Actions and orchestration via Prefect for robust batch ingestion. Deployed on Google Cloud Platform
+### 🏆 Model Performance
+| Metric | Value |
+|---|---|
+| Document Classification Accuracy | 80% (5 classes · RVL-CDIP) |
+| ONNX Inference Speedup vs PyTorch | 4.8x faster on CPU |
+| ONNX Inference Latency | 187ms avg (50-images benchmark) |
+
+### ⚡ Pipeline Latency (CPU · 50-images benchmark)
+| Component | Latency |
+|---|---|
+| Vision — EfficientNet-B0 ONNX | 187ms avg |
+| RAG Ingestion — SBERT + FAISS | 368ms avg |
+| LLM Generation — Llama 3.1 via Groq | 640ms p50 · 1.21s p99 |
+| OCR — EasyOCR CPU | 25.9s avg ⚠️ |
+| **Pipeline excluding OCR** | **~555ms** |
+
+> ⚠️ EasyOCR on CPU accounts for 97.9% of total latency.
+> Production path: GPU deployment or Tesseract migration → target 1-3s end-to-end.
+
+### 🔧 Engineering Highlights
+
+- **Inference Optimization** — Converted EfficientNet-B0 from PyTorch
+  to ONNX Runtime achieving 4.8x CPU speedup (187ms avg) —
+  eliminating PyTorch dependency in production container
+
+- **RAG Pipeline** — SBERT vectorization + FAISS semantic search
+  + Llama 3.1 via Groq ; RAG ingestion in 368ms,
+  LLM generation p50 640ms measured via LangSmith
+
+- **Observability** — End-to-end tracing with LangSmith +
+  Prometheus + Grafana for system metrics +
+  MLflow for experiment tracking
+
+- **RAG Guardrails** — responses grounded strictly in retrieved
+  context ; prompt engineering enforces source-only generation
+
+- **MLOps** — Prefect orchestration for batch ingestion pipeline,
+  GitHub Actions CI/CD, deployed on GCP Cloud Run via Docker
+
+- **Bottleneck Analysis** — EasyOCR CPU identified as constraint
+  at 25.9s avg (97.9% of total) ; documented with production
+  migration path in architecture notes
 *   **Tech Stack:** 
 
 ***AI & Machine Learning***:`PyTorch` · `ONNX Runtime` · `Sentence-Transformers` · `Llama 3.1 (Groq)` · `RAG` · `FAISS` · `LangChain`
@@ -114,16 +150,17 @@ Real-time tracking of Golden Signals: Request Latency (P99)=0.99s, CPU/RAM utili
 
 ## 📋 **Project Lifecycle & Engineering Challenges**
 
-* 1. Optimization for Production (ONNX)
+* 1. Optimization for Production (ONNX, OCR)
 To deploy on resource-constrained environments (8GB RAM), the PyTorch model was converted to ONNX.
-***Result***: 4.8x reduction in inference latency 
-***Challenge***: Resolved "External Data Path" errors by correctly mapping .onnx.data artifacts in the Docker build.
+***Result***: 4.8x reduction in inference latency. 
+***Inference Bottlenecks:*** Identified OCR on CPU as the primary latency driver (97% of total time). Used this profiling to justify a future GPU-accelerated roadmap.
 * 2. High-Performance RAG Ingestion
 Implemented an automated ingestion flow using **Prefect** to handle batch document processing with built-in Retries and error handling.
 ***Idempotency***: The system checks for existing document hashes to prevent duplicate indexing in the vector store.
 * 3. Software Rigor (CI/CD & Testing)
 ***Automated Testing***: 100% pass rate on Pytest suites covering API health, ONNX session integrity, and RAG retrieval logic.
 ***CI/CD:*** Fully automated deployment pipeline via GitHub Actions.
+***Docker Optimization (3.5GB vs 10GB)***: Initially, the build context leaked local virtual environments and raw data. I used multi stage building, reducing the image size from 10GB to 3.5GB.
 
 ## 🚀 **Getting Started:**
 **Local Development (Docker Compose)**
@@ -140,7 +177,7 @@ LANGCHAIN_API_KEY=lsv2_pt_your_key
 ```
 * Spin up the full stack:
 ```bash
-docker-compose -f docker/docker-compose.yml up --build
+docker compose up --build
 ```
 * API Usage
 

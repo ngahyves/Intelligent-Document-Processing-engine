@@ -1,0 +1,30 @@
+{
+    "project_name": "IntelliDoc-Stream",
+    "version": "1.0.0",
+    "benchmark_summary": {
+        "iterations": 20,
+        "environment": {
+            "hardware": "Local CPU (No GPU)",
+            "ram": "8GB",
+            "os": "Windows/Docker-WSL2",
+            "python_version": "3.11"
+        },
+        "performance_metrics": {
+            "vision_latency_avg_ms": 186.68,
+            "ocr_latency_avg_s": 25.89,
+            "rag_ingestion_latency_avg_ms": 368.00,
+            "total_pipeline_latency_avg_s": 26.45,
+            "throughput_docs_per_minute": 2.27
+        }
+    },
+    "bottleneck_analysis": {
+        "primary_bottleneck": "OCR (EasyOCR on CPU)",
+        "bottleneck_percentage_of_total": 97.9,
+        "recommended_optimization": "Migration to GPU-accelerated instances or PaddleOCR-ONNX"
+    },
+    "validation": {
+        "status": "Completed",
+        "api_response_code": 200,
+        "consistency_check": "Verified on 20 distinct runs"
+    }
+}

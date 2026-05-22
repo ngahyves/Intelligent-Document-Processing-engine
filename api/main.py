@@ -32,15 +32,15 @@ rag_engine = RAGEngine(vector_store)
 async def health():
     return {"status": "healthy"}
 
+#Upload endpoint
 @app.post("/upload")
 async def process_document(file: UploadFile = File(...)):
-    #Measuring the time request of each part in our API
     t0 = time.perf_counter()
     content = await file.read()
     
     # 1. Vision
     t1 = time.perf_counter()
-    doc_type = classifier.predict(content)
+    doc_type, confidence = classifier.predict(content) # Reçoit bien 2 valeurs
     v_time = (time.perf_counter() - t1) * 1000
 
     # 2. OCR
@@ -56,18 +56,30 @@ async def process_document(file: UploadFile = File(...)):
 
     total_time = (time.perf_counter() - t0) * 1000
     
-    logger.info(f"BREAKDOWN: Vision: {v_time:.0f}ms | OCR: {ocr_time:.0f}ms | RAG: {rag_time:.0f}ms")
-    
     return {
         "type": doc_type,
-        "detail": f"Total processing: {total_time/1000:.2f}s (OCR: {ocr_time/1000:.2f}s)"
+        "confidence": confidence,
+        "latencies": {
+            "vision_ms": round(v_time, 2),
+            "ocr_ms": round(ocr_time, 2),
+            "ingestion_ms": round(rag_time, 2),
+            "total_ms": round(total_time, 2)
+        }
     }
+#llm (llama endpoint)
 @app.post("/ask")
 async def ask_llm(question: str):
-    # Calling RAG with meta data passing for langsmith
+    t_start = time.perf_counter()
+    
     result = rag_engine.get_answer(
         question, 
         embedder, 
-        metadata=tracer.get_run_metadata("invoice") #tag the pass
+        metadata=tracer.get_run_metadata("invoice")
     )
-    return {"answer": result["answer"]}
+    
+    llm_time = (time.perf_counter() - t_start) * 1000
+    
+    return {
+        "answer": result["answer"],
+        "latency_llm_ms": round(llm_time, 2)
+    }
